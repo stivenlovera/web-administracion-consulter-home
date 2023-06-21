@@ -8,17 +8,8 @@ import { ContextUpdateDateTable } from '../../../../Context/Context';
 import UseDeletePostulante from '../../hooks/useEliminarPostulante';
 import { IPostulante } from '../../../../Services/Interface/postulantes';
 import dayjs from 'dayjs';
+import { initialStatePostulante } from '../modal-postulante/utils/initialPostulantes';
 
-const initialState: IPostulante = {
-  ci: '',
-  apellidos: '',
-  dirrecion: '',
-  email: '',
-  postulante_id: 0,
-  fecha_nacimiento: dayjs(),
-  nombre: '',
-  telefono: ''
-}
 interface ModalProps {
   openModal: boolean;
   id: number;
@@ -39,7 +30,7 @@ const ModalEliminarPostulante = ({ openModal, onClose, id }: ModalProps) => {
     setValues,
     resetForm
   } = useFormik({
-    initialValues: initialState,
+    initialValues: initialStatePostulante,
     onSubmit: async (value: IPostulante) => {
       const eliminar = await apiDeletePostulante();
       if (eliminar) {

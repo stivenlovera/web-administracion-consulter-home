@@ -1,8 +1,8 @@
 import { enqueueSnackbar } from "notistack";
 import { StoreEvaluadorService } from "../../../Services/evaluador";
-import { IEvaluador } from "../../../Services/Interface/configEvaluador";
+import { IEvaluacion, IFormEvaluacion } from "../../../Services/Interface/configEvaluador";
 
-const UseStoreEvaluador = (evaluador: IEvaluador) => {
+const UseStoreEvaluador = (evaluador: IFormEvaluacion) => {
     const apiStoreEvaluador = async () => {
         let status = false;
         try {

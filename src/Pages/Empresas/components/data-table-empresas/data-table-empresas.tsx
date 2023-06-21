@@ -17,8 +17,11 @@ export const DataTableEmpresas = () => {
     const [tipo, setTipo] = useState('')
     const [id, setId] = useState(0)
     const [tableColumnExtensions] = useState([
-        { columnName: 'nombreEmpresa' },
-        { columnName: 'empresa_id', width: 180 },
+        { columnName: 'nombreEmpresa', wordWrapEnabled: true },
+        { columnName: 'nombreRespresentante', width: 180, wordWrapEnabled: true },
+        { columnName: 'dirrecion', width: 220,wordWrapEnabled: true },
+        { columnName: 'telefono', wordWrapEnabled: true },
+        { columnName: 'empresa_id', width: 180, wordWrapEnabled: true },
     ]);
     const [columns] = useState([
         { name: 'nombreEmpresa', title: 'Empresa' },
@@ -126,7 +129,7 @@ export const DataTableEmpresas = () => {
                     />
                     <IntegratedFiltering />
                     <IntegratedSorting />
-                    <Table />
+                    <Table columnExtensions={tableColumnExtensions} />
                     <TableHeaderRow showSortingControls />
                     <CurrencyTypeProvider
                         for={dateColumnsEmpresaId}

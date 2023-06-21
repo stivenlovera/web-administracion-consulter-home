@@ -1,12 +1,12 @@
 import { enqueueSnackbar } from "notistack";
-import { IEvaluador } from "../../../Services/Interface/configEvaluador";
+import { IEvaluacion, IFormEvaluacion } from "../../../Services/Interface/configEvaluador";
 import { UpdateEvaluadorService } from "../../../Services/evaluador";
-const UseUpdateEvaluador = (empresa: IEvaluador) => {
+const UseUpdateEvaluador = (formEvaluacion: IFormEvaluacion) => {
 
     const apiUpdateEvaluador = async () => {
         let status = false;
         try {
-            const { data } = await UpdateEvaluadorService(empresa);
+            const { data } = await UpdateEvaluadorService(formEvaluacion);
             if (data.status == 1) {
                 status = true;
                 enqueueSnackbar(data.message, { variant: 'success' });

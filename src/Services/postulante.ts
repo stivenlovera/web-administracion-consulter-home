@@ -1,8 +1,11 @@
 import axios from "axios";
-import { IPostulante, IResponseInsertPostulante, IResponsePostulante,IResponseEditPostulante } from "./Interface/postulantes";
+import { IPostulante, IResponseInsertPostulante, IResponsePostulante,IResponseEditPostulante, IResponseCreatePostulante } from "./Interface/postulantes";
 
 export async function GetPostulantesService() {
     return await axios.get<IResponsePostulante>(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/postulantes`);
+}
+export async function CreatePostulanteService() {
+    return await axios.get<IResponseCreatePostulante>(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/postulantes/create`);
 }
 export async function StorePostulanteService(Postulante: IPostulante) {
     return await axios.post<IResponseInsertPostulante>(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/postulantes`, Postulante);

@@ -1,4 +1,6 @@
 import { Dayjs } from "dayjs";
+import { IEstadoCivil } from "./estadoCivil";
+import { IEstadoPostulante } from "./estadoPostulante";
 
 export interface IResponsePostulante {
     status: number;
@@ -8,6 +10,7 @@ export interface IResponsePostulante {
     }
 }
 export interface IPostulante {
+    fechaIngreso:string;
     ci:string;
     postulante_id: number;
     nombre: string;
@@ -16,6 +19,21 @@ export interface IPostulante {
     fecha_nacimiento: Dayjs;
     telefono: string;
     email: string;
+    expectativaSalarial:number;
+    estadoCivilId:number;
+    numeroHijos:string;
+    edades:string;
+    profesion:string;
+    estadoPostulanteId:number;
+    nombreEstadoPostulante:string;
+}
+export interface IResponseCreatePostulante {
+    status: number;
+    message: string;
+    data: {
+        estadoCiviles:IEstadoCivil[],
+        estadoPostulantes:IEstadoPostulante[]
+    }
 }
 export interface IResponseInsertPostulante {
     status: number;
@@ -26,7 +44,9 @@ export interface IResponseEditPostulante {
     status: number;
     message: string;
     data: {
-        postulante:IPostulante
+        postulante:IPostulante,
+        estadoCiviles:IEstadoCivil[],
+        estadoPostulantes:IEstadoPostulante[]
     }
 }
 export interface IResponseUpdatePostulante {

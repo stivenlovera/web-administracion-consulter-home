@@ -8,6 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import Submenu from './menu';
+import Options from "./Options";
 
 const drawerWidth: number = 240;
 
@@ -67,7 +68,7 @@ interface childrenProps {
 
 export const NavBar = ({ children, nombreCompleto, perfil }: childrenProps) => {
     const mdTheme = createTheme();
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -106,6 +107,7 @@ export const NavBar = ({ children, nombreCompleto, perfil }: childrenProps) => {
                         >
                             Consulter Home
                         </Typography>
+                        <Options perfil={perfil} nombreCompleto={nombreCompleto}></Options>
                         <Button color="inherit">{nombreCompleto}</Button>
                     </Toolbar>
                 </AppBar>

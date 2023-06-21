@@ -1,47 +1,73 @@
+import { IEmpresa } from "./empresas";
+import { IEstado } from "./estado";
+import { IPostulante } from "./postulantes";
 import { ITest } from "./test";
 
-export interface IResponseEvaluador {
+export interface IResponseEvaluacion {
     status: number;
     message: string;
     data: {
-        evaluadores: IEvaluador[]
+        evaluaciones: IEvaluacion[]
     }
 }
-export interface IEvaluador {
-    evaluador_id: number;
-    nombreEvaluador: string;
+export interface IFormEvaluacion{
+    evaluacion_id: number;
+    nota:string;
+    nombreEvaluacion: string;
+    estado_id:number;
+    dia:number,
+    cargo_id: number;
+    empresa_id: number;
+    nombreCargo: string;
+    fechaCreacion:string;
+    tests: number[];
+    postulantes: number[];
+}
+export interface IEvaluacion {
+    evaluacion_id: number;
+    nota:string;
+    nombreEvaluacion: string;
+    estadoId:number;
+    dia:number,
     cargo_id: number;
     nombreCargo: string;
+    fechaCreacion:string;
     tests: ITest[];
 }
-export interface IResponseCreaterEvaluador {
+export interface IResponseCreateEvaluacion {
     status: number;
     message: string;
     data: {
-        cargos: IEvaluador[]
+        cargos: IEvaluacion[]
         tests: ITest[]
+        postulantes: IPostulante[]
+        empresas: IEmpresa[]
+        estados: IEstado[]
     }
 }
-export interface IResponseInsertEvaluador {
+export interface IResponseInsertEvaluacion {
     status: number;
     message: string;
     data: null
 }
-export interface IResponseEditarEvaluador {
+export interface IResponseEditarEvaluacion {
     status: number;
     message: string;
     data: {
-        evaluador: IEvaluador,
-        cargos: IEvaluador[]
+        evaluacion: IFormEvaluacion,
+        cargos: IEvaluacion[]
         tests: ITest[]
+        postulantes: IPostulante[]
+        empresas: IEmpresa[]
+        estados: IEstado[]
     }
 }
-export interface IResponseUpdateEvaluador {
+export interface IResponseUpdateEvaluacion {
     status: number;
     message: string;
     data: null
 }
-export interface IResponseDeleteEvaluador {
+export interface IResponseDeleteEvaluacion {
     status: number;
     message: string;
     data: null

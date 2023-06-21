@@ -1,13 +1,12 @@
 import { enqueueSnackbar } from "notistack";
-import { StorePostulanteService } from "../../../Services/postulante";
-import { IPostulante } from "../../../Services/Interface/postulantes";
+import { IPostulante } from "../../../../../Services/Interface/postulantes";
+import { UpdatePostulanteService } from "../../../../../Services/postulante";
+const UseUpdatePostulante = (postulante: IPostulante) => {
 
-const UseStorePostulante = (postulante: IPostulante) => {
-
-    const apiStorePostulante = async () => {
+    const apiUpdatePostulante = async () => {
         let status = false;
         try {
-            const { data } = await StorePostulanteService(postulante);
+            const { data } = await UpdatePostulanteService(postulante);
             if (data.status == 1) {
                 status = true;
                 enqueueSnackbar(data.message, { variant: 'success' });
@@ -20,7 +19,7 @@ const UseStorePostulante = (postulante: IPostulante) => {
         return status;
     }
     return {
-        apiStorePostulante
+        apiUpdatePostulante
     }
 }
-export default UseStorePostulante;
+export default UseUpdatePostulante;

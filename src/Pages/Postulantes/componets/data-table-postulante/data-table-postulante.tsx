@@ -1,5 +1,5 @@
-import { SearchState, DataTypeProvider, SortingState, IntegratedFiltering, IntegratedSorting } from '@devexpress/dx-react-grid';
-import { Grid, SearchPanel, Table, TableHeaderRow, Toolbar, VirtualTable } from '@devexpress/dx-react-grid-material-ui';
+import { SearchState, DataTypeProvider, SortingState, IntegratedFiltering, IntegratedSorting, PagingState, IntegratedPaging } from '@devexpress/dx-react-grid';
+import { Grid, PagingPanel, SearchPanel, Table, TableHeaderRow, Toolbar, VirtualTable } from '@devexpress/dx-react-grid-material-ui';
 import { Box, Button, Paper, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
@@ -7,21 +7,21 @@ import { Loading } from '../../../../Components/loading/loading';
 import UseListEmpresa from '../../hooks/useListPostulante';
 import ModalPostulante from '../modal-postulante/modal-postulante';
 import { ContextUpdateDateTable } from '../../../../Context/Context';
-import UseEditarEmpresa from '../../hooks/useEditarPostulante';
-import UseCreateEmpresa from '../../hooks/useCreatePostulante';
+import UseEditarEmpresa from '../modal-postulante/hooks/useEditarPostulante';
+import UseCreateEmpresa from '../modal-postulante/hooks/useCreatePostulante';
 import ModalEliminarPostulante from '../modal-delete-postulante/modal-delete-postulante';
 
 export const DataTablePostulante = () => {
     const [dataTable, setDatatable] = useState<boolean>(true);
 
-    const [tipo, setTipo] = useState('')
+    const [modeEditar, setModeEditar] = useState(false)
     const [id, setId] = useState(0)
     const [tableColumnExtensions] = useState([
         { columnName: 'nombre', wordWrapEnabled: true },
         { columnName: 'nombre', wordWrapEnabled: true },
         { columnName: 'apellidos', wordWrapEnabled: true },
         { columnName: 'fecha_nacimiento', wordWrapEnabled: true },
-        { columnName: 'dirrecion', wordWrapEnabled: true },
+        { columnName: 'nombreEstadoPostulante', wordWrapEnabled: true },
         { columnName: 'email', width: 180, wordWrapEnabled: true },
         { columnName: 'postulante_id', width: 180, wordWrapEnabled: true },
     ]);
@@ -31,7 +31,7 @@ export const DataTablePostulante = () => {
         { name: 'apellidos', title: 'Apellidos' },
         { name: 'fecha_nacimiento', title: 'Fecha nacimiento' },
         { name: 'email', title: 'Email' },
-        { name: 'dirrecion', title: 'Dirrecion' },
+        { name: 'nombreEstadoPostulante', title: 'Estado' },
         { name: 'telefono', title: 'Telefono' },
         { name: 'postulante_id', title: 'Acciones' },
     ]);
@@ -41,29 +41,52 @@ export const DataTablePostulante = () => {
     const [currencyColumns] = useState(['empresa_id']);
     const [dateColumnsPostulanteId] = useState(['postulante_id']);
 
-    const DateFormatter = ({ value }: any) => value.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1');
-    const DateTypeProvider = (props: any) => (
-        <DataTypeProvider
-            formatterComponent={DateFormatter}
-            {...props}
-        />
-    );
+    const [onModal, setOnModal] = useState(false)
+    const [onModalDelete, setOnModalDelete] = useState(false)
+    const { rows, apiListPostulante } = UseListEmpresa();
+    const { apiCreatePostulantes, create, estadoCivilCreate, estadoPostulanteCreate } = UseCreateEmpresa();
+    const { apEditarPostulante, editar, estadoCivilEditar, estadoPostulanteEditar } = UseEditarEmpresa();
+
+    /*METODOS */
+    const onChangeCreate = async () => {
+        if (await apiCreatePostulantes()) {
+            setOnModal(true);
+            setModeEditar(false);
+        }
+    }
+    const onChangeEditar = async (id: number) => {
+
+        if (await apEditarPostulante(id)) {
+            setOnModal(true);
+            setModeEditar(true);
+            setId(id);
+        }
+    }
+
+    const onChangeEliminar = async (id: number) => {
+        setOnModalDelete(true);
+        setId(id);
+    }
+
+    useEffect(() => {
+        if (dataTable) {
+            apiListPostulante();
+        }
+        setDatatable(false);
+        return () => {
+
+        }
+    }, [dataTable])
+
     const CurrencyFormatter = ({ value }: any) => {
-        console.log(value)
+        //console.log(value)
         return (
             <>
                 <Button
                     sx={{ mr: 1, textTransform: "none" }}
                     variant="contained"
                     size='small'
-                    onClick={async () => {
-                        const estado = await apEditarPostulante(value)
-                        if (estado) {
-                            setOnModal(true);
-                            setTipo('editar');
-                            setId(value);
-                        }
-                    }}
+                    onClick={() => onChangeEditar(value)}
                 >
                     Editar
                 </Button>
@@ -72,7 +95,7 @@ export const DataTablePostulante = () => {
                     variant="contained"
                     color="error"
                     size='small'
-                    onClick={() => { setOnModalDelete(true); setId(value); }}
+                    onClick={() => { onChangeEliminar(value) }}
                 >
                     Eliminar
                 </Button>
@@ -85,23 +108,6 @@ export const DataTablePostulante = () => {
             {...props}
         />
     );
-
-    const [onModal, setOnModal] = useState(false)
-    const [onModalDelete, setOnModalDelete] = useState(false)
-    const { rows, apiListPostulante } = UseListEmpresa();
-    const { apiCreatePostulantes, create } = UseCreateEmpresa();
-    const { apEditarPostulante, editar } = UseEditarEmpresa();
-
-    useEffect(() => {
-        if (dataTable) {
-            apiListPostulante();
-        }
-        setDatatable(false);
-        return () => {
-
-        }
-    }, [dataTable])
-
     return (
         <ContextUpdateDateTable.Provider value={{ dataTable, setDatatable }}>
             <Box sx={{
@@ -116,7 +122,7 @@ export const DataTablePostulante = () => {
                     }}
                     size='small'
                     variant="contained"
-                    onClick={() => { setOnModal(true); setTipo('nuevo'); }}
+                    onClick={onChangeCreate}
                 >
                     Añadir Postulante
                 </Button>
@@ -141,14 +147,25 @@ export const DataTablePostulante = () => {
                     />
                     <Toolbar />
                     <SearchPanel />
+
+                    {/*  <PagingState
+                        defaultCurrentPage={0}
+                        pageSize={5}
+                    />
+                    <IntegratedPaging />
+                    <PagingPanel /> */}
                 </Grid>
                 {loading && <Loading />}
             </Paper>
             <ModalPostulante
                 onClose={() => { setOnModal(false) }}
-                data={tipo == 'nuevo' ? create : editar}
+                data={{
+                    postulante:modeEditar ? editar : create,
+                    estadoCivil:modeEditar ? estadoCivilEditar : estadoCivilCreate,
+                    estadoPostulante:modeEditar ? estadoPostulanteEditar : estadoPostulanteCreate
+                }}
                 openModal={onModal}
-                tipo={tipo}
+                editar={modeEditar}
                 id={id}
             />
             <ModalEliminarPostulante
