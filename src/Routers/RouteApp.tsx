@@ -11,7 +11,7 @@ import { Authenticacion } from '../Services/authenticate';
 const mdTheme = createTheme(
     {
         components: {
-            
+
             /* MuiTimeline: {
                 styleOverrides: {
                     root: {
@@ -27,12 +27,14 @@ const Home = lazy(() => import('../Pages/Home/Home'));
 const Login = lazy(() => import('../Pages/Login/login'));
 const NoAuthenticado = lazy(() => import('../Pages/NoAuthenticado/NoAuthenticado'));
 const ListaPostulantes = lazy(() => import('../Pages/Postulantes/lista-postulantes/lista-postulantes'));
-const ListEmpresas=lazy(() => import('../Pages/Empresas/lista-empresas/list-empresas'));
-const ListCargos=lazy(() => import('../Pages/Cargos/lista-cargos/list-cargos'));
-const ListTest=lazy(() => import('../Pages/Test/list-test/lista-test'));
-const ListConfigEvaluador=lazy(() => import('../Pages/Config-evaluacion/list-config-evaluciones/list-config-evaluaciones'));
-const Evaluciaciones=lazy(() => import('../Pages/Cargos/lista-cargos/list-cargos'));
-
+const ListEmpresas = lazy(() => import('../Pages/Empresas/lista-empresas/list-empresas'));
+const ListCargos = lazy(() => import('../Pages/Cargos/lista-cargos/list-cargos'));
+const Pregunta = lazy(() => import('../Pages/Plantillas/components/plantillas'));
+const ListConfigEvaluador = lazy(() => import('../Pages/Config-evaluacion/list-config-evaluciones/list-config-evaluaciones'));
+/* const ListaPlantillas = lazy(() => import('../Pages/Plantilla/list-plantillas')); */
+const ListaTest = lazy(() => import('../Pages/Plantillas/list-pregunta'));
+const Test= lazy(() => import('../Pages/Plantillas/components/plantillas'));
+const Resultado= lazy(() => import('../Pages/Evaluaciones/Resultados/resultados'));
 
 const initialState: AutenticacionDto = {
     modulos: [],
@@ -86,15 +88,20 @@ const RouteApp = () => {
                             <Route path="/lista-postulantes" element={<ListaPostulantes />}></Route>
                             <Route path="/lista-empresas" element={<ListEmpresas />}></Route>
                             <Route path="/lista-cargos" element={<ListCargos />}></Route>
-                            <Route path="/lista-test" element={<ListTest />}></Route>
-                            <Route path="/lista-evaluaciones" element={<ListConfigEvaluador/>}></Route>
+                            <Route path="/lista-evaluaciones" element={<ListConfigEvaluador />}></Route>
+                           {/*  <Route path="/lista-preguntas" element={<ListaPreguntas />}></Route>
+                            <Route path="/lista-preguntas/create" element={<Pregunta />}></Route> */}
+                            <Route path="/test" element={<ListaTest />}></Route>
+                            <Route path="/test/create" element={<Test />}></Route>
+                            <Route path="/test/editar/:id" element={<Test />}></Route> 
+                            <Route path="/test/vista-previa" element={<Test />}></Route> 
+                            <Route path="/evaluacion-detalle/:evaluacionId/:postulanteId" element={<Resultado />}></Route> 
                         </Route>
                         <Route path='/login' element={
                             <NoProtectorRoute valid={token} redirrecTo={'/bienvenido'}>
                                 <NoAuthenticado />
                             </NoProtectorRoute>}>
                             <Route path="/login" element={<Login />}></Route>
-
                         </Route>
                         {/* <Route path="/en-mantenimiento" element={<EnMantenimiento />}></Route> */}
                         {/* <Route path="/" element={<Login />}></Route>

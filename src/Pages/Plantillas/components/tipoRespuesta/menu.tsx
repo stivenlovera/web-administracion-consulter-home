@@ -4,28 +4,25 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import { ITipoPregunta } from '../../../../Services/Interface/tipoRespuesta';
 
-const options = [
-    'Respuesta abierta',
-    'Selecion unica',
-    'selecion multiple',
-    'subir archivo',
-    'ordenar imagenes',
-    'roshard',
-];
-
-export default function SimpleListMenu() {
+interface SimpleListMenuProps {
+    options: ITipoPregunta[],
+    onSelect(tipoRespuesta: ITipoPregunta): void
+}
+export default function SimpleListMenu({ onSelect, options }: SimpleListMenuProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [selectedIndex, setSelectedIndex] = React.useState(1);
+    const [selectedIndex, setSelectedIndex] = React.useState(0);
     const open = Boolean(anchorEl);
     const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
     const handleMenuItemClick = (
-        event: React.MouseEvent<HTMLElement>,
+        option: ITipoPregunta,
         index: number,
     ) => {
+        onSelect(option);
         setSelectedIndex(index);
         setAnchorEl(null);
     };
@@ -37,6 +34,7 @@ export default function SimpleListMenu() {
     return (
         <div>
             <List
+
                 component="nav"
                 aria-label="Device settings"
                 sx={{ bgcolor: 'background.paper' }}
@@ -52,7 +50,7 @@ export default function SimpleListMenu() {
                 >
                     <ListItemText
                         primary="Selecione tipo de respuesta"
-                        secondary={options[selectedIndex]}
+                        secondary={options[selectedIndex].tipo_pregunta_nombre}
                     />
                 </ListItem>
             </List>
@@ -68,12 +66,12 @@ export default function SimpleListMenu() {
             >
                 {options.map((option, index) => (
                     <MenuItem
-                        key={option}
+                        key={index}
                         /* disabled={index === 0} */
                         selected={index === selectedIndex}
-                        onClick={(event) => handleMenuItemClick(event, index)}
+                        onClick={(event) => handleMenuItemClick(option, index)}
                     >
-                        {option}
+                        {option.tipo_pregunta_nombre}
                     </MenuItem>
                 ))}
             </Menu>

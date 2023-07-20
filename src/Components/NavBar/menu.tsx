@@ -18,6 +18,7 @@ import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom'
@@ -54,9 +55,16 @@ const MainListItems = () => {
                 </ListItemIcon>
                 <ListItemText primary="Cargos" />
             </ListItemButton>
-            <ListItemButton component={Link} to="/lista-test">
+            {/*  <ListItemButton component={Link} to="/lista-plantilla">
                 <ListItemIcon>
                     <AutoStoriesIcon />
+                </ListItemIcon>
+                <ListItemText primary="Plantillas" />
+            </ListItemButton> */}
+            <ListItemButton component={Link} to="/test">
+                <ListItemIcon>
+                    {/* <QuestionAnswerIcon /> */}
+                    <EditNoteIcon />
                 </ListItemIcon>
                 <ListItemText primary="Test" />
             </ListItemButton>
@@ -72,8 +80,8 @@ const MainListItems = () => {
                 </ListItemIcon>
                 <ListItemText primary="Evaluaciones" />
             </ListItemButton>
-            
-           {/*  <ListItemButton onClick={handleClick} >
+
+            {/*  <ListItemButton onClick={handleClick} >
                 <ListItemIcon>
                     <BarChartIcon />
                 </ListItemIcon>

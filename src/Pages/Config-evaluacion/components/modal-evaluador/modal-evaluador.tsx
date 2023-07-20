@@ -230,7 +230,7 @@ const ModalEvaluador = ({ openModal, onClose, tipo, data, id, cargos, tests, emp
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <FormControl variant="standard" fullWidth>
-                                <InputLabel id="demo-simple-select-standard-label">Selecionar estado</InputLabel>
+                                <InputLabel id="demo-simple-select-standard-label">Seleccionar estado</InputLabel>
                                 <Select
                                     value={estado}
                                     name='estado_id'

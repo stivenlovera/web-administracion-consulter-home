@@ -18,6 +18,7 @@ export const DataTableConfigEvaluador = () => {
     const [id, setId] = useState(0)
     const [tableColumnExtensions] = useState([
         { columnName: 'nombreEvaluacion', width: 200, wordWrapEnabled: true },
+        { columnName: 'fechaCreacion', width: 200, wordWrapEnabled: true },
         { columnName: 'nombreCargo', width: 180, wordWrapEnabled: true },
         { columnName: 'nombreEmpresa', wordWrapEnabled: true },
         { columnName: 'nombreEstado', wordWrapEnabled: true },
@@ -27,6 +28,7 @@ export const DataTableConfigEvaluador = () => {
     ]);
     const [columns] = useState([
         { name: 'nombreEvaluacion', title: 'Nombre evaluacion' },
+        { name: 'fechaCreacion', title: 'Fecha registro' },
         { name: 'nombreCargo', title: 'Cargo' },
         { name: 'nombreEmpresa', title: 'Empresa' },
         { name: 'nombreEstado', title: 'Estado' },
@@ -80,7 +82,7 @@ export const DataTableConfigEvaluador = () => {
             {...props}
         />
     );
-    const CurrencyFormatterPostulantes = (data:any) => {
+    const CurrencyFormatterPostulantes = (data: any) => {
         return (
             <Chip
                 label={`${data.value} Postulantes`}
@@ -186,7 +188,7 @@ export const DataTableConfigEvaluador = () => {
                         onValueChange={setSearchValue}
                     />
                     <SortingState
-                        defaultSorting={[{ columnName: 'empresa_id', direction: 'asc' }]}
+                        defaultSorting={[{ columnName: 'nombreEvaluacion', direction: 'asc' }]}
                     />
                     <IntegratedFiltering />
                     <IntegratedSorting />
@@ -224,12 +226,11 @@ export const DataTableConfigEvaluador = () => {
                 postulantes={tipo == 'nuevo' ? postulantes : postulantesEdit}
                 estados={tipo == 'nuevo' ? estados : estadosEdit}
             />
-            <ModalEvaluacionPostulante id={id} onClose={() => { setModalPostulante(false) }} openModal={modalPostulante} />
-            {/* <ModalEliminarEmpresa
-                onClose={() => { setOnModalDelete(false) }}
+            <ModalEvaluacionPostulante
                 id={id}
-                openModal={onModalDelete}
-            /> */}
+                onClose={() => { setModalPostulante(false) }}
+                openModal={modalPostulante}
+            />
         </ContextUpdateDateTable.Provider>
     )
 }

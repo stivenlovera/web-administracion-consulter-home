@@ -108,7 +108,7 @@ export const NavBar = ({ children, nombreCompleto, perfil }: childrenProps) => {
                             Consulter Home
                         </Typography>
                         <Options perfil={perfil} nombreCompleto={nombreCompleto}></Options>
-                        <Button color="inherit">{nombreCompleto}</Button>
+                        {/* <Button color="inherit">{nombreCompleto}</Button> */}
                     </Toolbar>
                 </AppBar>
                 <Drawer variant="permanent" open={open}>
