@@ -20,7 +20,6 @@ import { enqueueSnackbar } from 'notistack';
 import usePlantilla from '../hook/usePlantilla';
 import { useNavigate } from "react-router-dom";
 import ImagenNoDisponible from '../../../../assests/imagenes/no-disponible.png'
-import { Label } from '@mui/icons-material';
 import { IProcedimiento } from '../../../../Services/Interface/plantilla';
 
 const options: ITipoPregunta[] = [
@@ -127,7 +126,7 @@ const Constructor = () => {
       respuesta_id: 0,
       descripcion: '',
       procesar: '',
-      valor: ''
+      valor: '0'
     }
     values.preguntas[indexPregunta].respuestas.push(nuevoRespuesta);
     setValues({ ...values })
@@ -179,6 +178,17 @@ const Constructor = () => {
       values.tiempo_total = pregunta.tiempo_total;
     })
     setFieldValue('tiempo_total', values.tiempo_total)
+  }
+
+  const onSetValorRespuesta = (name: string, indexPregunta: number) => {
+    values.preguntas[indexPregunta].respuestas.map((respuesta: IRespuesta) => {
+      return respuesta.valor = '0';
+    });
+    console.log('limpiando respuestas', values.preguntas[indexPregunta].respuestas)
+    console.log('añadiendo respuesta',name )
+    setValues(values);
+    setFieldValue(name, '1');
+
   }
 
   return (
@@ -531,6 +541,11 @@ const Constructor = () => {
                                                                   name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
                                                                   onChangeRespuestaImagen: handleChange,
                                                                   value_imagen: respuestas[index].imagen
+                                                                }}
+                                                                fieldRespuestaValor={{
+                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                  value_valor: respuestas[index].valor
                                                                 }}
                                                               />
                                                             )

@@ -164,9 +164,7 @@ const ModalEvaluador = ({ openModal, onClose, tipo, data, id, cargos, tests, emp
     useEffect(() => {
         setValues(data);
         setEstado(data.estado_id.toString() == '0' ? '' : data.estado_id.toString());
-        console.log('initial data', data)
-        return () => {
-        }
+
     }, [openModal])
 
     return (

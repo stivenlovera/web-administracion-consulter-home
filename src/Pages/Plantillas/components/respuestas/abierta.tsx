@@ -10,13 +10,19 @@ export interface ChangeRespuestaImagen {
     name_imagen: string;
     onChangeRespuestaImagen(e: React.ChangeEvent<any>): void;
 }
+export interface ChangeRespuestaValor {
+    value_valor: string;
+    name_valor: string;
+    onChangeRespuestaValor(e: React.ChangeEvent<any>): void;
+}
 export interface RespuestaProps {
     indexPregunta: number;
     indexrespuesta: number;
     descripcionRespuesta: string;
     onDelete(i: number): void
     fieldRespuestaDescripcion: changeRespuestaDescripcion
-    fieldRespuestaImagen: ChangeRespuestaImagen
+    fieldRespuestaImagen: ChangeRespuestaImagen,
+    fieldRespuestaValor?: ChangeRespuestaValor
 }
 const Abierta = ({
     descripcionRespuesta,
