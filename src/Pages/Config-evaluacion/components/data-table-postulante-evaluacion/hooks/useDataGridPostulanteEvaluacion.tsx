@@ -13,13 +13,30 @@ const useDataGridPostulanteEvaluacion = () => {
             dia: 0,
             estadoId: 0,
             evaluacion_id: 0,
-            fechaCreacion: '',
-            nombreCargo: '',
-            nombreEvaluacion: '',
-            nota: '',
+            fechaCreacion: '...',
+            nombreCargo: '...',
+            nombreEvaluacion: '...',
+            nota: '...',
+            fechaFin: '...',
+            fechaInicio: '...',
             tests: []
         },
-        test: []
+        test: [],
+        estado: {
+            estado_id: 0,
+            nombreEstado: ''
+        },
+        cargo: {
+            cargo_id: 0,
+            nombreCargo: ''
+        },
+        empresa: {
+            dirrecion: '',
+            empresa_id: 0,
+            nombreEmpresa: '',
+            nombreRespresentante: '',
+            telefono: ''
+        }
     })
     const apiLisEvaluacionPostulante = async (evaluacionPostulanteId: number) => {
         try {
@@ -38,7 +55,6 @@ const useDataGridPostulanteEvaluacion = () => {
     const apiLisEvaluacionPostulantePreview = async (evaluacionPostulanteId: number) => {
         try {
             const { data } = await GetGetListEvaluacionPreviewService(evaluacionPostulanteId);
-            console.log(data)
             if (data.status == 1) {
                 setPreview(data.data);
             } else {

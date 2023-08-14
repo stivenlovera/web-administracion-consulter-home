@@ -92,7 +92,7 @@ const RouteApp = () => {
                            {/*  <Route path="/lista-preguntas" element={<ListaPreguntas />}></Route>
                             <Route path="/lista-preguntas/create" element={<Pregunta />}></Route> */}
                             <Route path="/test" element={<ListaTest />}></Route>
-                            <Route path="/test/create" element={<Test />}></Route>
+                            <Route path="/test/:id" element={<Test />}></Route>
                             <Route path="/test/editar/:id" element={<Test />}></Route> 
                             <Route path="/test/vista-previa" element={<Test />}></Route> 
                             <Route path="/evaluacion-detalle/:evaluacionId/:postulanteId" element={<Resultado />}></Route> 

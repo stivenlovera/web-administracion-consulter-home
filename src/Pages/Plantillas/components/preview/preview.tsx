@@ -1,5 +1,5 @@
 import { Box, Button, Card, CardContent, CardMedia, Checkbox, Chip, FormControlLabel, Grid, Paper, Radio, TextField, Typography } from '@mui/material'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import ImagenNoDisponible from '../../../../assests/imagenes/no-disponible.png'
 import { ContextRespuesta } from '../../../../Context/ContextRespuesta';
 
@@ -7,7 +7,9 @@ const VistaPrevia = () => {
     //STATE
     const { plantilla, setPlantilla } = useContext(ContextRespuesta);
     const { descripcion_test, nombreTest, test_id, preguntas, pasos, procedimiento, tiempo_total, tipo_preguntas_id } = plantilla;
-    console.log(plantilla)
+    useEffect(() => {
+    }, [plantilla])
+    
     return (
         <>
             <Grid container spacing={2}>
@@ -133,6 +135,30 @@ const VistaPrevia = () => {
                                                                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom textAlign={'center'}>
                                                                         {respuesta.descripcion}
                                                                     </Typography>
+                                                                </Grid>
+                                                            )
+                                                        case 7:
+                                                            return (
+                                                                <Grid style={{ paddingLeft: '15%', paddingTop: 0 }} item xs={12} md={12} key={i}>
+                                                                    <FormControlLabel value="female" control={<Radio />} label={respuesta.descripcion} />
+                                                                </Grid>
+                                                            )
+                                                        case 8:
+                                                            return (
+                                                                <Grid style={{ paddingLeft: '15%', paddingTop: 0 }} item xs={12} md={12} key={i}>
+                                                                    <FormControlLabel value="female" control={<Radio />} label={respuesta.descripcion} />
+                                                                </Grid>
+                                                            )
+                                                        case 9:
+                                                            return (
+                                                                <Grid style={{ paddingLeft: '15%', paddingTop: 0 }} item xs={12} md={12} key={i}>
+                                                                    <FormControlLabel value="female" control={<Radio />} label={respuesta.descripcion} />
+                                                                </Grid>
+                                                            )
+                                                        case 10:
+                                                            return (
+                                                                <Grid style={{ paddingLeft: '15%', paddingTop: 0 }} item xs={12} md={12} key={i}>
+                                                                    <FormControlLabel value="female" control={<Radio />} label={respuesta.descripcion} />
                                                                 </Grid>
                                                             )
                                                     }

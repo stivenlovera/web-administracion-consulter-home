@@ -34,7 +34,7 @@ export const DataTablePlantillas = () => {
     const [rows, setRows] = useState<IPlantilla[]>([]);
 
     /*API */
-    const { List } = usePlantilla({});
+    const { List } = usePlantilla();
     const loadTable = async () => {
         const data = await List();
         setRows(data)

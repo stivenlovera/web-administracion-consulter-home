@@ -15,12 +15,11 @@ import SubirArchivo from '../respuestas/subir-archivo';
 import SelecionImagen from '../respuestas/selecion-imagen';
 import { ContextRespuesta } from '../../../../Context/ContextRespuesta';
 import { readUploadedFileAsText } from '../../../../Utils/FileBase64';
-import { storePregunta } from '../../../../Services/servicio';
-import { enqueueSnackbar } from 'notistack';
 import usePlantilla from '../hook/usePlantilla';
 import { useNavigate } from "react-router-dom";
 import ImagenNoDisponible from '../../../../assests/imagenes/no-disponible.png'
 import { IProcedimiento } from '../../../../Services/Interface/plantilla';
+import { useParams } from 'react-router-dom';
 
 const options: ITipoPregunta[] = [
   {
@@ -46,12 +45,31 @@ const options: ITipoPregunta[] = [
   {
     tipo_pregunta_id: 6,
     tipo_pregunta_nombre: 'Roshard'
-  }
+  },
+  {
+    tipo_pregunta_id: 7,
+    tipo_pregunta_nombre: 'KUDEN'
+  },
+  {
+    tipo_pregunta_id: 8,
+    tipo_pregunta_nombre: 'MMPI'
+  },
+  {
+    tipo_pregunta_id: 9,
+    tipo_pregunta_nombre: 'EYSENCK'
+  },
+  {
+    tipo_pregunta_id: 10,
+    tipo_pregunta_nombre: 'EDWARDS'
+  },
 ];
 
-const Constructor = () => {
+interface PropsConstructor {
+  edit: boolean
+}
+const Constructor = ({ edit }: PropsConstructor) => {
   const navigate = useNavigate();
-
+  const { id } = useParams();
   //STATE
   const { plantilla, setPlantilla } = useContext(ContextRespuesta);
   const [option, setOption] = useState<ITipoPregunta>({
@@ -81,7 +99,7 @@ const Constructor = () => {
         respuestas: Yup.array()
           .of(Yup.object().shape({
             respuesta_id: Yup.string(),
-            procesar: Yup.number(),
+            procesar: Yup.string(),
             descripcion: Yup.string(),
             imagen: Yup.string(),
             valor: Yup.string()
@@ -93,8 +111,14 @@ const Constructor = () => {
     initialValues: initialStatePlantilla,
     validationSchema,
     onSubmit: async (values) => {
-      Store()
-      navigate("/test");
+      if (edit) {
+        console.log('modificando', values)
+        Update({ values })
+        navigate("/test");
+      } else {
+        Store({ values })
+        navigate("/test");
+      }
     }
   });
   const {
@@ -109,7 +133,7 @@ const Constructor = () => {
     resetForm,
   } = formPregunta;
 
-  const { Store } = usePlantilla({ values });
+  const { Store, Update } = usePlantilla();
 
   const hadlerAddProcedimiento = () => {
     const nuevoPaso: IProcedimiento = {
@@ -166,12 +190,10 @@ const Constructor = () => {
   }
 
   useEffect(() => {
-    setPlantilla(values);
-
-    return () => {
-
-    }
-  }, [values])
+    //
+    setValues(plantilla)
+   // setPlantilla(values)
+  }, [plantilla])
 
   const sumarTiempos = () => {
     values.preguntas.map((pregunta: IPregunta) => {
@@ -185,10 +207,9 @@ const Constructor = () => {
       return respuesta.valor = '0';
     });
     console.log('limpiando respuestas', values.preguntas[indexPregunta].respuestas)
-    console.log('añadiendo respuesta',name )
+    console.log('añadiendo respuesta', name)
     setValues(values);
     setFieldValue(name, '1');
-
   }
 
   return (
@@ -610,6 +631,106 @@ const Constructor = () => {
                                                                     setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
                                                                   },
                                                                   value_imagen: respuestas[index].imagen
+                                                                }}
+                                                              />
+                                                            )
+                                                          case 7:
+                                                            return (
+                                                              <SelecionUnica
+                                                                key={index}
+                                                                indexPregunta={i}
+                                                                indexrespuesta={index}
+                                                                descripcionRespuesta='Describa una respuesta'
+                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                fieldRespuestaDescripcion={{
+                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                  onChangeRespuestaDescripcion: handleChange,
+                                                                  value_descripcion: respuestas[index].descripcion
+                                                                }}
+                                                                fieldRespuestaImagen={{
+                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                  onChangeRespuestaImagen: handleChange,
+                                                                  value_imagen: respuestas[index].imagen
+                                                                }}
+                                                                fieldRespuestaValor={{
+                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                  value_valor: respuestas[index].valor
+                                                                }}
+                                                              />
+                                                            )
+                                                          case 8:
+                                                            return (
+                                                              <SelecionUnica
+                                                                key={index}
+                                                                indexPregunta={i}
+                                                                indexrespuesta={index}
+                                                                descripcionRespuesta='Describa una respuesta'
+                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                fieldRespuestaDescripcion={{
+                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                  onChangeRespuestaDescripcion: handleChange,
+                                                                  value_descripcion: respuestas[index].descripcion
+                                                                }}
+                                                                fieldRespuestaImagen={{
+                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                  onChangeRespuestaImagen: handleChange,
+                                                                  value_imagen: respuestas[index].imagen
+                                                                }}
+                                                                fieldRespuestaValor={{
+                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                  value_valor: respuestas[index].valor
+                                                                }}
+                                                              />
+                                                            )
+                                                          case 9:
+                                                            return (
+                                                              <SelecionUnica
+                                                                key={index}
+                                                                indexPregunta={i}
+                                                                indexrespuesta={index}
+                                                                descripcionRespuesta='Describa una respuesta'
+                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                fieldRespuestaDescripcion={{
+                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                  onChangeRespuestaDescripcion: handleChange,
+                                                                  value_descripcion: respuestas[index].descripcion
+                                                                }}
+                                                                fieldRespuestaImagen={{
+                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                  onChangeRespuestaImagen: handleChange,
+                                                                  value_imagen: respuestas[index].imagen
+                                                                }}
+                                                                fieldRespuestaValor={{
+                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                  value_valor: respuestas[index].valor
+                                                                }}
+                                                              />
+                                                            )
+                                                          case 10:
+                                                            return (
+                                                              <SelecionUnica
+                                                                key={index}
+                                                                indexPregunta={i}
+                                                                indexrespuesta={index}
+                                                                descripcionRespuesta='Describa una respuesta'
+                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                fieldRespuestaDescripcion={{
+                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                  onChangeRespuestaDescripcion: handleChange,
+                                                                  value_descripcion: respuestas[index].descripcion
+                                                                }}
+                                                                fieldRespuestaImagen={{
+                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                  onChangeRespuestaImagen: handleChange,
+                                                                  value_imagen: respuestas[index].imagen
+                                                                }}
+                                                                fieldRespuestaValor={{
+                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                  value_valor: respuestas[index].valor
                                                                 }}
                                                               />
                                                             )

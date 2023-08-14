@@ -32,6 +32,8 @@ export interface IEvaluacion {
     cargo_id: number;
     nombreCargo: string;
     fechaCreacion:string;
+    fechaInicio:string;
+    fechaFin:string;
     tests: ITest[];
 }
 export interface IResponseCreateEvaluacion {
