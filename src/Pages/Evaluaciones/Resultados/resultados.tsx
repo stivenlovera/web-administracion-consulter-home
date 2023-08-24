@@ -19,5 +19,4 @@ const Resultado = () => {
         </>
     )
 }
-
 export default Resultado
