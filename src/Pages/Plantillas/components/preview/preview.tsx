@@ -9,7 +9,7 @@ const VistaPrevia = () => {
     const { descripcion_test, nombreTest, test_id, preguntas, pasos, procedimiento, tiempo_total, tipo_preguntas_id } = plantilla;
     useEffect(() => {
     }, [plantilla])
-    
+
     return (
         <>
             <Grid container spacing={2}>
@@ -159,6 +159,22 @@ const VistaPrevia = () => {
                                                             return (
                                                                 <Grid style={{ paddingLeft: '15%', paddingTop: 0 }} item xs={12} md={12} key={i}>
                                                                     <FormControlLabel value="female" control={<Radio />} label={respuesta.descripcion} />
+                                                                </Grid>
+                                                            )
+                                                        case 11:
+                                                            return (
+                                                                <Grid item lg={3} xl={2} xs={2} md={2} key={i}>
+                                                                    <div style={{ display: 'flex' }}>
+                                                                        <CardMedia
+                                                                            style={{ maxWidth: '80%', margin: 'auto' }}
+                                                                            component="img"
+                                                                            image={respuesta.imagen == '' ? ImagenNoDisponible : respuesta.imagen}
+                                                                            alt="Paella dish"
+                                                                        />
+                                                                    </div>
+                                                                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom textAlign={'center'}>
+                                                                        {respuesta.descripcion}
+                                                                    </Typography>
                                                                 </Grid>
                                                             )
                                                     }

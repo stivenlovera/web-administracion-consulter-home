@@ -62,6 +62,10 @@ const options: ITipoPregunta[] = [
     tipo_pregunta_id: 10,
     tipo_pregunta_nombre: 'EDWARDS'
   },
+  {
+    tipo_pregunta_id: 11,
+    tipo_pregunta_nombre: 'Factor G'
+  },
 ];
 
 interface PropsConstructor {
@@ -114,10 +118,10 @@ const Constructor = ({ edit }: PropsConstructor) => {
       if (edit) {
         console.log('modificando', values)
         Update({ values })
-        navigate("/test");
+        //navigate("/test");
       } else {
         Store({ values })
-        navigate("/test");
+        //navigate("/test");
       }
     }
   });
@@ -190,10 +194,8 @@ const Constructor = ({ edit }: PropsConstructor) => {
   }
 
   useEffect(() => {
-    //
-    setValues(plantilla)
-   // setPlantilla(values)
-  }, [plantilla])
+    setPlantilla(values)
+  }, [values])
 
   const sumarTiempos = () => {
     values.preguntas.map((pregunta: IPregunta) => {
@@ -731,6 +733,29 @@ const Constructor = ({ edit }: PropsConstructor) => {
                                                                   name_valor: `preguntas[${i}].respuestas[${index}].valor`,
                                                                   onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
                                                                   value_valor: respuestas[index].valor
+                                                                }}
+                                                              />
+                                                            )
+                                                          case 11:
+                                                            return (
+                                                              <SelecionImagen
+                                                                key={index}
+                                                                indexPregunta={i}
+                                                                indexrespuesta={index}
+                                                                descripcionRespuesta='Describa una respuesta'
+                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                fieldRespuestaDescripcion={{
+                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                  onChangeRespuestaDescripcion: handleChange,
+                                                                  value_descripcion: respuestas[index].descripcion
+                                                                }}
+                                                                fieldRespuestaImagen={{
+                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                  onChangeRespuestaImagen: async (e) => {
+                                                                    const converImagen = await readUploadedFileAsText(e);
+                                                                    setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
+                                                                  },
+                                                                  value_imagen: respuestas[index].imagen
                                                                 }}
                                                               />
                                                             )
