@@ -221,5 +221,4 @@ const VistaPrevia = () => {
         </>
     )
 }
-
 export default VistaPrevia
