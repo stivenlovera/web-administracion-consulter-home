@@ -9,6 +9,9 @@ export async function listPregunta() {
 export async function storePregunta(values?: IPlantilla) {
     return await axios.post<IResponse<null>>(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/test`, values);
 }
+export async function createPregunta(id: number) {
+    return await axios.get<IResponse<IPlantilla>>(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/test/create`);
+}
 export async function editarPregunta(id: number) {
     return await axios.get<IResponse<IPlantilla>>(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/test/edit/${id}`);
 }

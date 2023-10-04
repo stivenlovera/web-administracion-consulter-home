@@ -1,6 +1,6 @@
 import { SearchState, DataTypeProvider, SortingState, IntegratedFiltering, IntegratedSorting, PagingState, IntegratedPaging } from '@devexpress/dx-react-grid';
 import { Grid, PagingPanel, SearchPanel, Table, TableHeaderRow, Toolbar, VirtualTable } from '@devexpress/dx-react-grid-material-ui';
-import { Box, Button, Paper, Typography } from '@mui/material';
+import { Backdrop, Box, Button, CircularProgress, Paper, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { Loading } from '../../../Components/loading/loading';
@@ -10,6 +10,7 @@ import usePlantilla from './hook/usePlantilla';
 import { IPlantilla } from '../../../Services/Interface/plantilla';
 
 export const DataTablePlantillas = () => {
+    const [loading, setLoading] = useState(true)
     const [dataTable, setDatatable] = useState<boolean>(true);
     const [id, setId] = useState(0)
     const [tableColumnExtensions] = useState([
@@ -24,7 +25,6 @@ export const DataTablePlantillas = () => {
         { name: 'tiempo_respuesta', title: 'Tiempo respuesta' },
         { name: 'test_id', title: 'Acciones' },
     ]);
-    const [loading, setLoading] = useState(false);
 
     const [searchValue, setSearchValue] = useState('');
     const [dateColumnsPostulanteId] = useState(['test_id']);
@@ -38,6 +38,7 @@ export const DataTablePlantillas = () => {
     const loadTable = async () => {
         const data = await List();
         setRows(data)
+        setLoading(false)
     }
     /*METODOS */
 
@@ -47,10 +48,6 @@ export const DataTablePlantillas = () => {
     }
 
     useEffect(() => {
-        /* if (dataTable) {
-            loadTable()
-        }
-        setDatatable(false); */
         loadTable()
     }, [dataTable])
 
@@ -85,6 +82,12 @@ export const DataTablePlantillas = () => {
     );
     return (
         <>
+            {/* <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop> */}
             <Box sx={{
                 display: 'flex',
                 justifyContent: 'space-between'

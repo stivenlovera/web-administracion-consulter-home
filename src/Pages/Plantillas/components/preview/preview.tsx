@@ -2,13 +2,14 @@ import { Box, Button, Card, CardContent, CardMedia, Checkbox, Chip, FormControlL
 import React, { useContext, useEffect } from 'react'
 import ImagenNoDisponible from '../../../../assests/imagenes/no-disponible.png'
 import { ContextRespuesta } from '../../../../Context/ContextRespuesta';
-
-const VistaPrevia = () => {
+import moment from 'moment';
+import { IPlantilla } from '../../../../Services/Interface/plantilla';
+interface VistaPreviaProps {
+    plantilla: IPlantilla
+}
+const VistaPrevia = ({ plantilla }: VistaPreviaProps) => {
     //STATE
-    const { plantilla, setPlantilla } = useContext(ContextRespuesta);
     const { descripcion_test, nombreTest, test_id, preguntas, pasos, procedimiento, tiempo_total, tipo_preguntas_id } = plantilla;
-    useEffect(() => {
-    }, [plantilla])
 
     return (
         <>
@@ -27,7 +28,7 @@ const VistaPrevia = () => {
                                         {descripcion_test}
                                     </Typography>
                                     {
-                                        tiempo_total == 0 ? (null) : (<Chip label={`Duracion ${tiempo_total} min.`} color="primary" />)
+                                        tiempo_total == 0 ? (null) : (<Chip label={`Duracion ${moment.utc(tiempo_total * 1000).format('HH:mm:ss')} seg.`} color="primary" />)
                                     }
                                 </Box>
                             </div>
@@ -162,6 +163,22 @@ const VistaPrevia = () => {
                                                                 </Grid>
                                                             )
                                                         case 11:
+                                                            return (
+                                                                <Grid item lg={3} xl={2} xs={2} md={2} key={i}>
+                                                                    <div style={{ display: 'flex' }}>
+                                                                        <CardMedia
+                                                                            style={{ maxWidth: '80%', margin: 'auto' }}
+                                                                            component="img"
+                                                                            image={respuesta.imagen == '' ? ImagenNoDisponible : respuesta.imagen}
+                                                                            alt="Paella dish"
+                                                                        />
+                                                                    </div>
+                                                                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom textAlign={'center'}>
+                                                                        {respuesta.descripcion}
+                                                                    </Typography>
+                                                                </Grid>
+                                                            )
+                                                        case 12:
                                                             return (
                                                                 <Grid item lg={3} xl={2} xs={2} md={2} key={i}>
                                                                     <div style={{ display: 'flex' }}>

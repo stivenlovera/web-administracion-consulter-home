@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Checkbox, FormControlLabel, Grid, Paper, Switch, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardActions, CardContent, CardMedia, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Paper, Select, Stack, Switch, TextField, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
 import SimpleListMenu from '../tipoRespuesta/menu';
 import AddIcon from '@mui/icons-material/Add';
@@ -18,8 +18,10 @@ import { readUploadedFileAsText } from '../../../../Utils/FileBase64';
 import usePlantilla from '../hook/usePlantilla';
 import { useNavigate } from "react-router-dom";
 import ImagenNoDisponible from '../../../../assests/imagenes/no-disponible.png'
-import { IProcedimiento } from '../../../../Services/Interface/plantilla';
+import { IPlantilla, IProcedimiento } from '../../../../Services/Interface/plantilla';
 import { useParams } from 'react-router-dom';
+import VistaPrevia from '../preview/preview';
+import { ITest } from '../../../../Services/Interface/test';
 
 const options: ITipoPregunta[] = [
   {
@@ -66,20 +68,29 @@ const options: ITipoPregunta[] = [
     tipo_pregunta_id: 11,
     tipo_pregunta_nombre: 'Factor G'
   },
+  {
+    tipo_pregunta_id: 12,
+    tipo_pregunta_nombre: 'Ordenar colores'
+  },
+  {
+    tipo_pregunta_id: 13,
+    tipo_pregunta_nombre: 'Ordenar imagenes'
+  },
 ];
 
 interface PropsConstructor {
-  edit: boolean
+  ejemplos: ITest[];
+  edit: boolean;
+  plantilla: IPlantilla;
+  onProcess: (plantilla: IPlantilla) => void
 }
-const Constructor = ({ edit }: PropsConstructor) => {
-  const navigate = useNavigate();
-  const { id } = useParams();
+const Constructor = ({ edit, plantilla, ejemplos, onProcess }: PropsConstructor) => {
   //STATE
-  const { plantilla, setPlantilla } = useContext(ContextRespuesta);
   const [option, setOption] = useState<ITipoPregunta>({
     tipo_pregunta_id: 0,
     tipo_pregunta_nombre: ''
   });
+
   const validationSchema = Yup.object().shape({
     test_id: Yup.number(),
     tiempo_total: Yup.number().required('Defina tiempo en minutos'),
@@ -112,7 +123,7 @@ const Constructor = ({ edit }: PropsConstructor) => {
     )
   });
   const formPregunta = useFormik({
-    initialValues: initialStatePlantilla,
+    initialValues: plantilla,
     validationSchema,
     onSubmit: async (values) => {
       if (edit) {
@@ -125,6 +136,7 @@ const Constructor = ({ edit }: PropsConstructor) => {
       }
     }
   });
+
   const {
     values,
     errors,
@@ -182,7 +194,6 @@ const Constructor = ({ edit }: PropsConstructor) => {
   }
 
   const hadlerSelectTipoRespuesta = (option: ITipoPregunta) => {
-    console.log(option)
     values.tipo_preguntas_id = option.tipo_pregunta_id;
     values.preguntas = []
     setValues({ ...values });
@@ -194,8 +205,8 @@ const Constructor = ({ edit }: PropsConstructor) => {
   }
 
   useEffect(() => {
-    setPlantilla(values)
-  }, [values])
+    setValues(plantilla);
+  }, [plantilla, ejemplos])
 
   const sumarTiempos = () => {
     values.preguntas.map((pregunta: IPregunta) => {
@@ -208,589 +219,643 @@ const Constructor = ({ edit }: PropsConstructor) => {
     values.preguntas[indexPregunta].respuestas.map((respuesta: IRespuesta) => {
       return respuesta.valor = '0';
     });
-    console.log('limpiando respuestas', values.preguntas[indexPregunta].respuestas)
-    console.log('añadiendo respuesta', name)
     setValues(values);
     setFieldValue(name, '1');
   }
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} sx={{ margin: 0, padding: 0 }}>
-        <Typography style={{ fontSize: 14 }} color="text.secondary">
-          CONSTRUCTOR
-        </Typography>
+      <Grid item xl={6} md={6} >
+        <VistaPrevia
+          plantilla={values}
+        />
       </Grid>
-      <Grid item xs={12}>
-        <Card sx={{ minWidth: 275 }} >
-          <FormikProvider value={formPregunta} >
-            <Form onSubmit={(e) => { console.log(errors); handleSubmit(e) }}>
-              <CardContent>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={12}>
-                    <TextField
-                      fullWidth
-                      label="Nombre de plantilla (no visible) "
-                      variant="filled"
-                      size='small'
-                      name='nombreTest'
-                      value={values.nombreTest}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      helperText={errors.nombreTest}
-                      error={!!errors.nombreTest}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <TextField
-                      fullWidth
-                      label="Titulo de plantilla"
-                      variant="filled"
-                      size='small'
-                      name='descripcion_test'
-                      value={values.descripcion_test}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      helperText={errors.descripcion_test}
-                      error={!!errors.descripcion_test}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <Card sx={{ border: '0px solid #22A9DF', background: '#F7F7F7' }}>
-                      <CardContent>
+      <Grid item xl={6} md={6} >
+        <Grid container spacing={2}>
+          <Grid item xs={12} sx={{ margin: 0, padding: 0 }}>
+            <Typography style={{ fontSize: 14 }} color="text.secondary">
+              CONSTRUCTOR
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Card sx={{ minWidth: 275 }} >
+              <FormikProvider value={formPregunta} >
+                <Form onSubmit={(e) => { console.log(values); handleSubmit(e) }}>
+                  <CardContent>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={12}>
+                        <TextField
+                          fullWidth
+                          label="Nombre de plantilla (no visible) "
+                          variant="filled"
+                          size='small'
+                          name='nombreTest'
+                          value={values.nombreTest}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          helperText={errors.nombreTest}
+                          error={!!errors.nombreTest}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <TextField
+                          fullWidth
+                          label="Titulo de plantilla"
+                          variant="filled"
+                          size='small'
+                          name='descripcion_test'
+                          value={values.descripcion_test}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          helperText={errors.descripcion_test}
+                          error={!!errors.descripcion_test}
+                        />
+                      </Grid>
+                      <Grid item xs={6} md={6}>
+                        <TextField
+                          fullWidth
+                          label="Configure tiempo de duracion"
+                          variant="filled"
+                          size='small'
+                          name='tiempo_total'
+                          value={values.tiempo_total}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          helperText={errors.tiempo_total}
+                          error={!!errors.tiempo_total}
+                        />
+                      </Grid>
+                      <Grid item xs={6} md={6}>
+                        <FormControl variant="filled" size='small' fullWidth>
+                          <InputLabel id="demo-simple-select-filled-label">Selecione un test como ejemplo</InputLabel>
+                          <Select
+                            labelId="demo-simple-select-filled-label"
+                            id="demo-simple-select-filled"
+                            name='test_ejemplo_id'
+                            defaultValue={0}
+                            value={values.test_ejemplo_id}
+                            onChange={handleChange}
+                          >
+                            <MenuItem value={0}>
+                              <em>No tiene ejemplo</em>
+                            </MenuItem>
+                            {
+                              ejemplos.map((ejemplo, i) => {
+                                return (
+                                  <MenuItem key={i} value={ejemplo.test_id}>{ejemplo.nombreTest}</MenuItem>
+                                )
+                              })
+                            }
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <Card sx={{ border: '0px solid #22A9DF', background: '#F7F7F7' }}>
+                          <CardContent>
+                            <Box sx={{ justifyContent: 'space-between', display: "flex", flexWrap: "wrap" }}>
+                              <Grid container spacing={2}>
+                                <Grid item xs={12} md={12}>
+                                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                    DESCRIBE PASOS PARA DESARROLLAR EL TEST
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                  <TextField
+                                    fullWidth
+                                    label="Nombre del procedimiento"
+                                    variant="filled"
+                                    size='small'
+                                    name='procedimiento'
+                                    value={values.procedimiento}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    helperText={errors.procedimiento}
+                                    error={!!errors.procedimiento}
+                                  />
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                  <Button
+                                    variant="contained"
+                                    size='small'
+                                    style={{ margin: 'auto' }}
+                                    startIcon={<AddIcon />}
+                                    onClick={hadlerAddProcedimiento}
+                                  >
+                                    Añadir pasos
+                                  </Button>
+                                </Grid>
+                                <Grid item xs={12} md={12} >
+                                  <FieldArray
+                                    name="pasos"
+                                    render={arrayPasos => {
+                                      const pasos = values.pasos;
+                                      return (
+                                        <>
+                                          {pasos && pasos.length > 0 ? (
+                                            pasos.map((paso: IProcedimiento, i: number) => {
+                                              return (
+                                                <Card sx={{ border: '0px solid #22A9DF', m: 1 }} key={i}>
+                                                  <CardContent>
+                                                    <Box sx={{ justifyContent: 'space-between', display: "flex", flexWrap: "wrap" }}>
+                                                      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                                        {`${i + 1}. Paso`}
+                                                      </Typography>
+                                                      <Button
+                                                        variant="contained"
+                                                        color='error'
+                                                        size='small'
+                                                        startIcon={<DeleteIcon />} onClick={() => { hadlerDeletePaso(i) }}
+                                                      >
+                                                        Eliminar paso
+                                                      </Button>
+                                                    </Box>
+                                                    <br />
+                                                    <Grid container spacing={2} sx={{ background: 'white' }}>
+                                                      <Grid item xs={12} md={12}>
+                                                        <TextField
+                                                          fullWidth
+                                                          label="Descripcion pasos a seguir"
+                                                          variant="filled"
+                                                          size='small'
+                                                          name={`pasos[${i}].descripcion`}
+                                                          value={values.pasos[i].descripcion}
+                                                          onChange={handleChange}
+                                                          onBlur={handleBlur}
+                                                        />
+                                                      </Grid>
+                                                      <Grid item xs={12} md={12} >
+                                                        <Typography sx={{ fontSize: 14 }} align='center' color="text.secondary" gutterBottom>
+                                                          Imagen para paso
+                                                        </Typography>
+                                                        <label style={{ display: 'flex' }} htmlFor={`image-pasos-${i}`}>
+                                                          <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            id={`image-pasos-${i}`}
+                                                            name={`pasos[${i}].imagen`}
+                                                            onChange={async (e) => {
+                                                              const converImagen = await readUploadedFileAsText(e);
+                                                              console.log(converImagen)
+                                                              setFieldValue(`pasos[${i}].imagen`, converImagen);
+                                                              console.log(values.pasos[i])
+                                                            }}
+                                                            hidden
+                                                          />
+                                                          <CardMedia
+                                                            style={{
+                                                              maxWidth: '30%',
+                                                              margin: 'auto'
+                                                            }}
+                                                            sx={{
+                                                              backgroundColor: 'white',
+                                                              '&:hover': {
+                                                                backgroundColor: '#94EFFF',
+                                                                opacity: [0.9, 0.8, 0.7],
+                                                              },
+                                                              cursor: 'pointer'
+                                                            }}
+                                                            component="img"
+                                                            image={values.pasos[i].imagen == '' ? ImagenNoDisponible : values.pasos[i].imagen}
+                                                            alt="Imagen"
+                                                          />
+                                                        </label>
+                                                      </Grid>
+                                                    </Grid>
+                                                  </CardContent>
+                                                </Card >
+                                              )
+                                            }
+                                            )) : null
+                                          }
+                                        </>
+                                      )
+                                    }}
+                                  />
+                                </Grid >
+                              </Grid>
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
                         <Box sx={{ justifyContent: 'space-between', display: "flex", flexWrap: "wrap" }}>
-                          <Grid container spacing={2}>
-                            <Grid item xs={12} md={12}>
-                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                DESCRIBE PASOS PARA DESARROLLAR EL TEST
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                              <TextField
-                                fullWidth
-                                label="Nombre del procedimiento"
-                                variant="filled"
-                                size='small'
-                                name='procedimiento'
-                                value={values.procedimiento}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                helperText={errors.procedimiento}
-                                error={!!errors.procedimiento}
-                              />
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                              <Button
-                                variant="contained"
-                                size='small'
-                                style={{ margin: 'auto' }}
-                                startIcon={<AddIcon />}
-                                onClick={hadlerAddProcedimiento}
-                              >
-                                Añadir pasos
-                              </Button>
-                            </Grid>
-                            <Grid item xs={12} md={12} >
-                              <FieldArray
-                                name="pasos"
-                                render={arrayPasos => {
-                                  const pasos = values.pasos;
-                                  return (
-                                    <>
-                                      {pasos && pasos.length > 0 ? (
-                                        pasos.map((paso: IProcedimiento, i: number) => {
-                                          return (
-                                            <Card sx={{ border: '0px solid #22A9DF', m: 1 }} key={i}>
-                                              <CardContent>
-                                                <Box sx={{ justifyContent: 'space-between', display: "flex", flexWrap: "wrap" }}>
-                                                  <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                                    {`${i + 1}. Paso`}
-                                                  </Typography>
-                                                  <Button
-                                                    variant="contained"
-                                                    color='error'
-                                                    size='small'
-                                                    startIcon={<DeleteIcon />} onClick={() => { hadlerDeletePaso(i) }}
-                                                  >
-                                                    Eliminar paso
-                                                  </Button>
-                                                </Box>
-                                                <br />
-                                                <Grid container spacing={2} sx={{ background: 'white' }}>
-                                                  <Grid item xs={12} md={12}>
-                                                    <TextField
-                                                      fullWidth
-                                                      label="Descripcion pasos a seguir"
-                                                      variant="filled"
-                                                      size='small'
-                                                      name={`pasos[${i}].descripcion`}
-                                                      value={values.pasos[i].descripcion}
-                                                      onChange={handleChange}
-                                                      onBlur={handleBlur}
-                                                    />
-                                                  </Grid>
-                                                  <Grid item xs={12} md={12} >
-                                                    <Typography sx={{ fontSize: 14 }} align='center' color="text.secondary" gutterBottom>
-                                                      Imagen para paso
-                                                    </Typography>
-                                                    <label style={{ display: 'flex' }} htmlFor={`image-pasos-${i}`}>
-                                                      <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        id={`image-pasos-${i}`}
-                                                        name={`pasos[${i}].imagen`}
-                                                        onChange={async (e) => {
-                                                          const converImagen = await readUploadedFileAsText(e);
-                                                          console.log(converImagen)
-                                                          setFieldValue(`pasos[${i}].imagen`, converImagen);
-                                                          console.log(values.pasos[i])
-                                                        }}
-                                                        hidden
-                                                      />
-                                                      <CardMedia
-                                                        style={{
-                                                          maxWidth: '30%',
-                                                          margin: 'auto'
-                                                        }}
-                                                        sx={{
-                                                          backgroundColor: 'white',
-                                                          '&:hover': {
-                                                            backgroundColor: '#94EFFF',
-                                                            opacity: [0.9, 0.8, 0.7],
-                                                          },
-                                                          cursor: 'pointer'
-                                                        }}
-                                                        component="img"
-                                                        image={values.pasos[i].imagen == '' ? ImagenNoDisponible : values.pasos[i].imagen}
-                                                        alt="Imagen"
-                                                      />
-                                                    </label>
-                                                  </Grid>
-                                                </Grid>
-                                              </CardContent>
-                                            </Card >
-                                          )
-                                        }
-                                        )) : null
-                                      }
-                                    </>
-                                  )
-                                }}
-                              />
-                            </Grid >
-                          </Grid>
+                          <SimpleListMenu onSelect={(e) => { hadlerSelectTipoRespuesta(e) }} options={options} />
                         </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <Box sx={{ justifyContent: 'space-between', display: "flex", flexWrap: "wrap" }}>
-                      <SimpleListMenu onSelect={(e) => { hadlerSelectTipoRespuesta(e) }} options={options} />
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12} md={12}>
-                    <Button
-                      variant="contained"
-                      size='small'
-                      style={{ margin: 'auto' }}
-                      startIcon={<AddIcon />}
-                      onClick={hadlerAddPregunta}
-                    >
-                      Añadir preguntas
-                    </Button>
-                  </Grid>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <Button
+                          variant="contained"
+                          size='small'
+                          style={{ margin: 'auto' }}
+                          startIcon={<AddIcon />}
+                          onClick={hadlerAddPregunta}
+                        >
+                          Añadir preguntas
+                        </Button>
+                      </Grid>
 
-                  <FieldArray
-                    name="preguntas"
-                    render={arrayPreguntas => {
-                      const preguntas = values.preguntas;
-                      return (
-                        <>
-                          {preguntas && preguntas.length > 0 ? (
-                            preguntas.map((pregunta: IPregunta, i: number) => {
-                              return (
-                                <Grid item xs={12} md={12} key={i}>
-                                  <Card sx={{ border: '1px solid #22A9DF' }}>
-                                    <CardContent>
-                                      <Box sx={{ justifyContent: 'space-between', display: "flex", flexWrap: "wrap" }}>
-                                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                          CREA TU PREGUNTA
-                                        </Typography>
-                                        <Button
-                                          variant="contained"
-                                          color='error'
-                                          size='small'
-                                          startIcon={<DeleteIcon />} onClick={() => { hadlerDeletePregunta(i) }}
-                                        >
-                                          Eliminar pregunta
-                                        </Button>
-                                      </Box>
-                                      <br />
-                                      <Grid container spacing={2} >
-                                        <Grid item xs={12} md={12} style={{ paddingTop: 0 }}>
-                                          <TextField
-                                            fullWidth
-                                            sx={{ m: 0, p: 0 }}
-                                            label="Describa su pregunta"
-                                            variant="filled"
-                                            size='small'
-                                            name={`preguntas[${i}].pregunta_nombre`}
-                                            value={values.preguntas[i].pregunta_nombre}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                          />
-
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                          <TextField
-                                            fullWidth
-                                            type='number'
-                                            label="Tiempo de respuesta"
-                                            variant="filled"
-                                            size='small'
-                                            name={`preguntas[${i}].tiempo_total`}
-                                            value={values.preguntas[i].tiempo_total}
-                                            onChange={(e) => {
-                                              handleChange(e)
-                                              sumarTiempos()
-                                            }}
-                                            onBlur={handleBlur}
-                                            helperText={errors.tiempo_total}
-                                            error={!!errors.tiempo_total}
-                                          />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                          <FormControlLabel control={<Checkbox defaultChecked />} label="Ver por seccion" />
-                                        </Grid>
-                                        <Grid item xs={12} md={12} >
-                                          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                                            Imagen para la pregunta
-                                          </Typography>
-                                          <label style={{ display: 'flex' }} htmlFor={`image-pregunta-${i}`}>
-                                            <input
-                                              type="file"
-                                              accept="image/*"
-                                              id={`image-pregunta-${i}`}
-                                              name={`preguntas[${i}].imagen`}
-                                              onChange={async (e) => {
-                                                const converImagen = await readUploadedFileAsText(e);
-                                                console.log(converImagen)
-                                                //setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
-                                                setFieldValue(`preguntas[${i}].imagen`, converImagen);
-                                                console.log(values.preguntas[i])
-                                              }}
-                                              hidden
-                                            />
-                                            <CardMedia
-                                              style={{
-                                                maxWidth: '30%',
-                                                margin: 'auto'
-                                              }}
-                                              sx={{
-                                                backgroundColor: 'white',
-                                                '&:hover': {
-                                                  backgroundColor: '#94EFFF',
-                                                  opacity: [0.9, 0.8, 0.7],
-                                                },
-                                                cursor: 'pointer'
-                                              }}
-                                              component="img"
-                                              image={values.preguntas[i].imagen == '' ? ImagenNoDisponible : values.preguntas[i].imagen}
-                                              alt="Imagen"
-                                            />
-                                          </label>
-                                        </Grid>
-                                      </Grid>
-                                      <br />
-                                      <Grid container spacing={2}>
-                                        <Grid item xs={12} md={12}>
-                                          <div style={{ display: 'flex' }}>
+                      <FieldArray
+                        name="preguntas"
+                        render={arrayPreguntas => {
+                          const preguntas = values.preguntas;
+                          return (
+                            <>
+                              {preguntas && preguntas.length > 0 ? (
+                                preguntas.map((pregunta: IPregunta, i: number) => {
+                                  return (
+                                    <Grid item xs={12} md={12} key={i}>
+                                      <Card sx={{ border: '1px solid #22A9DF' }}>
+                                        <CardContent>
+                                          <Box sx={{ justifyContent: 'space-between', display: "flex", flexWrap: "wrap" }}>
+                                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                              CREA TU PREGUNTA
+                                            </Typography>
                                             <Button
                                               variant="contained"
+                                              color='error'
                                               size='small'
-                                              style={{ margin: 'auto' }}
-                                              startIcon={<AddIcon />}
-                                              onClick={() => hadlerAddRespuesta(i)}
+                                              startIcon={<DeleteIcon />} onClick={() => { hadlerDeletePregunta(i) }}
                                             >
-                                              Añadir respuesta
+                                              Eliminar pregunta
                                             </Button>
-                                          </div>
-                                        </Grid>
-                                        <Grid item xs={12} md={12}>
-                                          <FieldArray
-                                            name="respuestas"
-                                            render={arrayRespuesta => {
-                                              const respuestas = values.preguntas[i].respuestas;
-                                              return (
-                                                <Grid container spacing={2}>
-                                                  <Grid item sm={12} xs={12}>
-                                                    {respuestas && respuestas.length > 0 ? (
-                                                      respuestas.map((respuesta: IRespuesta, index: number) => {
-                                                        switch (values.tipo_preguntas_id) {
-                                                          case 1:
-                                                            return (
-                                                              <Abierta
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: handleChange,
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                              />
-                                                            )
-                                                          case 2:
-                                                            return (
-                                                              <SelecionUnica
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: handleChange,
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                                fieldRespuestaValor={{
-                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
-                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
-                                                                  value_valor: respuestas[index].valor
-                                                                }}
-                                                              />
-                                                            )
-                                                          case 3:
-                                                            return (
-                                                              <SelecionMultiple
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa cada seleccion'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: handleChange,
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                              />
+                                          </Box>
+                                          <br />
+                                          <Grid container spacing={2} >
+                                            <Grid item xs={12} md={12} style={{ paddingTop: 0 }}>
+                                              <TextField
+                                                fullWidth
+                                                sx={{ m: 0, p: 0 }}
+                                                label="Describa su pregunta"
+                                                variant="filled"
+                                                size='small'
+                                                name={`preguntas[${i}].pregunta_nombre`}
+                                                value={values.preguntas[i].pregunta_nombre}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                              />
 
-                                                            )
-                                                          case 4:
-                                                            return (
-                                                              <SubirArchivo
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: handleChange,
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                              />
-                                                            )
-                                                          case 5:
-                                                            return (
-                                                              <SelecionImagen
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: async (e) => {
-                                                                    const converImagen = await readUploadedFileAsText(e);
-                                                                    setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
-                                                                  },
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                              />
-                                                            )
-                                                          case 7:
-                                                            return (
-                                                              <SelecionUnica
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: handleChange,
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                                fieldRespuestaValor={{
-                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
-                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
-                                                                  value_valor: respuestas[index].valor
-                                                                }}
-                                                              />
-                                                            )
-                                                          case 8:
-                                                            return (
-                                                              <SelecionUnica
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: handleChange,
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                                fieldRespuestaValor={{
-                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
-                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
-                                                                  value_valor: respuestas[index].valor
-                                                                }}
-                                                              />
-                                                            )
-                                                          case 9:
-                                                            return (
-                                                              <SelecionUnica
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: handleChange,
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                                fieldRespuestaValor={{
-                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
-                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
-                                                                  value_valor: respuestas[index].valor
-                                                                }}
-                                                              />
-                                                            )
-                                                          case 10:
-                                                            return (
-                                                              <SelecionUnica
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: handleChange,
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                                fieldRespuestaValor={{
-                                                                  name_valor: `preguntas[${i}].respuestas[${index}].valor`,
-                                                                  onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
-                                                                  value_valor: respuestas[index].valor
-                                                                }}
-                                                              />
-                                                            )
-                                                          case 11:
-                                                            return (
-                                                              <SelecionImagen
-                                                                key={index}
-                                                                indexPregunta={i}
-                                                                indexrespuesta={index}
-                                                                descripcionRespuesta='Describa una respuesta'
-                                                                onDelete={(e) => hadlerDeleteRespuesta(i, e)}
-                                                                fieldRespuestaDescripcion={{
-                                                                  name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
-                                                                  onChangeRespuestaDescripcion: handleChange,
-                                                                  value_descripcion: respuestas[index].descripcion
-                                                                }}
-                                                                fieldRespuestaImagen={{
-                                                                  name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
-                                                                  onChangeRespuestaImagen: async (e) => {
-                                                                    const converImagen = await readUploadedFileAsText(e);
-                                                                    setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
-                                                                  },
-                                                                  value_imagen: respuestas[index].imagen
-                                                                }}
-                                                              />
-                                                            )
+                                            </Grid>
+
+
+                                            <Grid item xs={12} md={12} >
+                                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                                Imagen para la pregunta
+                                              </Typography>
+                                              <label style={{ display: 'flex' }} htmlFor={`image-pregunta-${i}`}>
+                                                <input
+                                                  type="file"
+                                                  accept="image/*"
+                                                  id={`image-pregunta-${i}`}
+                                                  name={`preguntas[${i}].imagen`}
+                                                  onChange={async (e) => {
+                                                    const converImagen = await readUploadedFileAsText(e);
+                                                    console.log(converImagen)
+                                                    //setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
+                                                    setFieldValue(`preguntas[${i}].imagen`, converImagen);
+                                                    console.log(values.preguntas[i])
+                                                  }}
+                                                  hidden
+                                                />
+                                                <CardMedia
+                                                  style={{
+                                                    maxWidth: '80%',
+                                                    margin: 'auto'
+                                                  }}
+                                                  sx={{
+                                                    backgroundColor: 'white',
+                                                    '&:hover': {
+                                                      backgroundColor: '#94EFFF',
+                                                      opacity: [0.9, 0.8, 0.7],
+                                                    },
+                                                    cursor: 'pointer'
+                                                  }}
+                                                  component="img"
+                                                  image={values.preguntas[i].imagen == '' ? ImagenNoDisponible : values.preguntas[i].imagen}
+                                                  alt="Imagen"
+                                                />
+                                              </label>
+                                            </Grid>
+                                          </Grid>
+                                          <br />
+                                          <Grid container spacing={2}>
+                                            <Grid item xs={12} md={12}>
+                                              <div style={{ display: 'flex' }}>
+                                                <Button
+                                                  variant="contained"
+                                                  size='small'
+                                                  style={{ margin: 'auto' }}
+                                                  startIcon={<AddIcon />}
+                                                  onClick={() => hadlerAddRespuesta(i)}
+                                                >
+                                                  Añadir respuesta
+                                                </Button>
+                                              </div>
+                                            </Grid>
+                                            <Grid item xs={12} md={12}>
+                                              <FieldArray
+                                                name="respuestas"
+                                                render={arrayRespuesta => {
+                                                  const respuestas = values.preguntas[i].respuestas;
+                                                  return (
+                                                    <Grid container spacing={2}>
+                                                      <Grid item sm={12} xs={12}>
+                                                        {respuestas && respuestas.length > 0 ? (
+                                                          respuestas.map((respuesta: IRespuesta, index: number) => {
+                                                            switch (values.tipo_preguntas_id) {
+                                                              case 1:
+                                                                return (
+                                                                  <Abierta
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 2:
+                                                                return (
+                                                                  <SelecionUnica
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                    fieldRespuestaValor={{
+                                                                      name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                      onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                      value_valor: respuestas[index].valor
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 3:
+                                                                return (
+                                                                  <SelecionMultiple
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa cada seleccion'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                  />
+
+                                                                )
+                                                              case 4:
+                                                                return (
+                                                                  <SubirArchivo
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 5:
+                                                                return (
+                                                                  <SelecionImagen
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: async (e) => {
+                                                                        const converImagen = await readUploadedFileAsText(e);
+                                                                        setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
+                                                                      },
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 7:
+                                                                return (
+                                                                  <SelecionUnica
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                    fieldRespuestaValor={{
+                                                                      name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                      onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                      value_valor: respuestas[index].valor
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 8:
+                                                                return (
+                                                                  <SelecionUnica
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                    fieldRespuestaValor={{
+                                                                      name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                      onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                      value_valor: respuestas[index].valor
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 9:
+                                                                return (
+                                                                  <SelecionUnica
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                    fieldRespuestaValor={{
+                                                                      name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                      onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                      value_valor: respuestas[index].valor
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 10:
+                                                                return (
+                                                                  <SelecionUnica
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                    fieldRespuestaValor={{
+                                                                      name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                      onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                      value_valor: respuestas[index].valor
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 11:
+                                                                return (
+                                                                  <SelecionImagen
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: async (e) => {
+                                                                        const converImagen = await readUploadedFileAsText(e);
+                                                                        setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
+                                                                      },
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                    fieldRespuestaValor={{
+                                                                      name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                      onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                      value_valor: respuestas[index].valor
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 12:
+                                                                return (
+                                                                  <SelecionImagen
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: async (e) => {
+                                                                        const converImagen = await readUploadedFileAsText(e);
+                                                                        setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
+                                                                      },
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                  />
+                                                                )
+                                                            }
+                                                          })) : null
                                                         }
-                                                      })) : null
-                                                    }
-                                                  </Grid>
-                                                </Grid>
-                                              )
-                                            }}
-                                          />
-                                        </Grid>
-                                      </Grid>
-                                    </CardContent>
-                                  </Card>
-                                </Grid>
-                              )
-                            })) : null
-                          }
-                        </>
+                                                      </Grid>
+                                                    </Grid>
+                                                  )
+                                                }}
+                                              />
+                                            </Grid>
+                                          </Grid>
+                                        </CardContent>
+                                      </Card>
+                                    </Grid>
+                                  )
+                                })) : null
+                              }
+                            </>
 
-                      )
-                    }}
-                  />
+                          )
+                        }}
+                      />
 
-                </Grid>
-              </CardContent>
-              <CardActions>
-                <Button size="small" color='success' type='submit' variant='contained'>Registrar</Button>
-              </CardActions>
-            </Form>
-          </FormikProvider>
-        </Card>
+                    </Grid>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" color='success' type='submit' variant='contained'>Registrar</Button>
+                  </CardActions>
+                </Form>
+              </FormikProvider>
+            </Card>
+          </Grid>
+        </Grid >
       </Grid>
-    </Grid >
+    </Grid>
   )
 }
 

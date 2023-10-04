@@ -84,8 +84,8 @@ export const DataTablePostulanteEvaluacionResultado = ({ evaluacionId, postulant
 
     const exportExcel = (tipoPreguntaId: number, row: any) => {
         console.log(tipoPreguntaId)
-        if (tipoPreguntaId == 10 || tipoPreguntaId == 9 || tipoPreguntaId == 7) {
-            window.open(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/resultado-report/report_excel/${row.evaluacion_id}/${row.postulante_id}/${row.test_id}`, '_blank');
+        if (tipoPreguntaId == 10 || tipoPreguntaId == 9 || tipoPreguntaId == 7 || tipoPreguntaId == 11) {
+            window.open(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/resultado-report/report_excel/${row.evaluacion_id}/${row.postulante_id}/${row.test_id}/${row.resultado_test_id}`, '_blank');
         }
         else {
             setOpenModalAlerta(true);
@@ -94,8 +94,8 @@ export const DataTablePostulanteEvaluacionResultado = ({ evaluacionId, postulant
     }
     const exportPdf = (tipoPreguntaId: number, row: any) => {
         console.log(tipoPreguntaId)
-        if (tipoPreguntaId == 1 || tipoPreguntaId ==4 ) {
-            window.open(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/resultado-report/report_pdf/${row.evaluacion_id}/${row.postulante_id}/${row.test_id}`, '_blank');
+        if (tipoPreguntaId == 1 || tipoPreguntaId == 4) {
+            window.open(`${process.env.REACT_APP_API_CONSULTER_HOME}/api/resultado-report/report_pdf/${row.evaluacion_id}/${row.postulante_id}/${row.test_id}/${row.resultado_test_id}`, '_blank');
         }
         else {
             setOpenModalAlerta(true);

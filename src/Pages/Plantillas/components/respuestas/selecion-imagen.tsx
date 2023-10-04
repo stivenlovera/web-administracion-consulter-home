@@ -1,4 +1,4 @@
-import { Box, Button, CardMedia, Grid, Paper, TextField, Typography } from '@mui/material'
+import { Box, Button, CardMedia, FormControlLabel, Grid, Paper, Radio, TextField, Typography } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import ImagenNoDisponible from '../../../../assests/imagenes/no-disponible.png'
 import { RespuestaProps } from './abierta';
@@ -10,7 +10,8 @@ const SelecionImagen = ({
     indexrespuesta,
     onDelete,
     fieldRespuestaDescripcion,
-    fieldRespuestaImagen
+    fieldRespuestaImagen,
+    fieldRespuestaValor
 }: RespuestaProps) => {
     const onChangeImagen = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const converImagen = await readUploadedFileAsText(e);
@@ -76,6 +77,16 @@ const SelecionImagen = ({
                                     Carga una imagen
                                 </Button>
                             </div>
+                            <FormControlLabel value="" control={
+                                <Radio
+                                    checked={fieldRespuestaValor!.value_valor === '1'}
+                                    onChange={fieldRespuestaValor!.onChangeRespuestaValor}
+                                    value={fieldRespuestaValor!.value_valor}
+                                    name={fieldRespuestaValor!.name_valor}
+                                    inputProps={{ 'aria-label': '1' }}
+
+                                />
+                            } label="Correcto" />
                         </Grid>
                     </Box>
                 </Grid>

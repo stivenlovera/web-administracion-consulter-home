@@ -11,7 +11,6 @@ const usePlantilla = () => {
         try {
             const { data, status } = await listPregunta()
             if (data.status == 1) {
-                enqueueSnackbar(data.message, { variant: 'success' });
                 return data.data;
             }
         } catch (error) {

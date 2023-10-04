@@ -5,8 +5,9 @@ export const initialStatePlantilla: IPlantilla = {
     test_id: 0,
     nombreTest: '',
     preguntas: [],
-    procedimiento:'',
-    pasos:[],
-    tiempo_total:0,
-    tipo_preguntas_id:0
+    procedimiento: '',
+    pasos: [],
+    tiempo_total: 0,
+    tipo_preguntas_id: 0,
+    test_ejemplo_id: 0
 }
