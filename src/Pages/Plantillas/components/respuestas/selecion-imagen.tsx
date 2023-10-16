@@ -13,6 +13,13 @@ const SelecionImagen = ({
     fieldRespuestaImagen,
     fieldRespuestaValor
 }: RespuestaProps) => {
+    console.log( descripcionRespuesta,
+        indexPregunta,
+        indexrespuesta,
+        onDelete,
+        fieldRespuestaDescripcion,
+        fieldRespuestaImagen,
+        fieldRespuestaValor)
     const onChangeImagen = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const converImagen = await readUploadedFileAsText(e);
         fieldRespuestaImagen.onChangeRespuestaImagen(converImagen);

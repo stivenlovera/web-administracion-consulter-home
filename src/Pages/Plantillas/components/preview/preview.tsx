@@ -194,6 +194,19 @@ const VistaPrevia = ({ plantilla }: VistaPreviaProps) => {
                                                                     </Typography>
                                                                 </Grid>
                                                             )
+                                                        case 6:
+                                                            return (
+                                                                <Grid style={{ paddingBottom: 15 }} item xs={12} md={12} key={i}>
+
+                                                                    <TextField
+                                                                        required
+                                                                        fullWidth
+                                                                        label={respuesta.descripcion}
+                                                                        variant="filled"
+                                                                        size='small'
+                                                                    />
+                                                                </Grid>
+                                                            )
                                                     }
                                                 })
                                             }

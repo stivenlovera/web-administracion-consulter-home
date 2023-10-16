@@ -168,6 +168,7 @@ const Constructor = ({ edit, plantilla, ejemplos, onProcess }: PropsConstructor)
       procesar: '',
       valor: '0'
     }
+    console.log(nuevoRespuesta)
     values.preguntas[indexPregunta].respuestas.push(nuevoRespuesta);
     setValues({ ...values })
   }
@@ -561,6 +562,7 @@ const Constructor = ({ edit, plantilla, ejemplos, onProcess }: PropsConstructor)
                                                       <Grid item sm={12} xs={12}>
                                                         {respuestas && respuestas.length > 0 ? (
                                                           respuestas.map((respuesta: IRespuesta, index: number) => {
+                                                            console.log(respuestas[index])
                                                             switch (values.tipo_preguntas_id) {
                                                               case 1:
                                                                 return (
@@ -818,6 +820,31 @@ const Constructor = ({ edit, plantilla, ejemplos, onProcess }: PropsConstructor)
                                                                         const converImagen = await readUploadedFileAsText(e);
                                                                         setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
                                                                       },
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                    fieldRespuestaValor={{
+                                                                      name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                      onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                      value_valor: respuestas[index].valor
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 6:
+                                                                return (
+                                                                  <Abierta
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: handleChange,
                                                                       value_imagen: respuestas[index].imagen
                                                                     }}
                                                                   />
