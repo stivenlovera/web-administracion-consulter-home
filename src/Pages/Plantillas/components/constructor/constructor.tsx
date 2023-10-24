@@ -74,8 +74,9 @@ const options: ITipoPregunta[] = [
   },
   {
     tipo_pregunta_id: 13,
-    tipo_pregunta_nombre: 'Ordenar imagenes'
+    tipo_pregunta_nombre: 'Ordenar historietas'
   },
+
 ];
 
 interface PropsConstructor {
@@ -846,6 +847,34 @@ const Constructor = ({ edit, plantilla, ejemplos, onProcess }: PropsConstructor)
                                                                       name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
                                                                       onChangeRespuestaImagen: handleChange,
                                                                       value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                  />
+                                                                )
+                                                              case 13:
+                                                                return (
+                                                                  <SelecionImagen
+                                                                    key={index}
+                                                                    indexPregunta={i}
+                                                                    indexrespuesta={index}
+                                                                    descripcionRespuesta='Describa una respuesta'
+                                                                    onDelete={(e) => hadlerDeleteRespuesta(i, e)}
+                                                                    fieldRespuestaDescripcion={{
+                                                                      name_descripcion: `preguntas[${i}].respuestas[${index}].descripcion`,
+                                                                      onChangeRespuestaDescripcion: handleChange,
+                                                                      value_descripcion: respuestas[index].descripcion
+                                                                    }}
+                                                                    fieldRespuestaImagen={{
+                                                                      name_imagen: `preguntas[${i}].respuestas[${index}].imagen`,
+                                                                      onChangeRespuestaImagen: async (e) => {
+                                                                        const converImagen = await readUploadedFileAsText(e);
+                                                                        setFieldValue(`preguntas[${i}].respuestas[${index}].imagen`, converImagen)
+                                                                      },
+                                                                      value_imagen: respuestas[index].imagen
+                                                                    }}
+                                                                    fieldRespuestaValor={{
+                                                                      name_valor: `preguntas[${i}].respuestas[${index}].valor`,
+                                                                      onChangeRespuestaValor: (e) => { onSetValorRespuesta(`preguntas[${i}].respuestas[${index}].valor`, i) },
+                                                                      value_valor: respuestas[index].valor
                                                                     }}
                                                                   />
                                                                 )

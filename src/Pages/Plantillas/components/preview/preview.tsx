@@ -197,7 +197,6 @@ const VistaPrevia = ({ plantilla }: VistaPreviaProps) => {
                                                         case 6:
                                                             return (
                                                                 <Grid style={{ paddingBottom: 15 }} item xs={12} md={12} key={i}>
-
                                                                     <TextField
                                                                         required
                                                                         fullWidth
@@ -205,6 +204,22 @@ const VistaPrevia = ({ plantilla }: VistaPreviaProps) => {
                                                                         variant="filled"
                                                                         size='small'
                                                                     />
+                                                                </Grid>
+                                                            )
+                                                        case 13:
+                                                            return (
+                                                                <Grid item lg={3} xl={2} xs={2} md={2} key={i}>
+                                                                    <div style={{ display: 'flex' }}>
+                                                                        <CardMedia
+                                                                            style={{ maxWidth: '80%', margin: 'auto' }}
+                                                                            component="img"
+                                                                            image={respuesta.imagen == '' ? ImagenNoDisponible : respuesta.imagen}
+                                                                            alt="Paella dish"
+                                                                        />
+                                                                    </div>
+                                                                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom textAlign={'center'}>
+                                                                        {respuesta.descripcion}
+                                                                    </Typography>
                                                                 </Grid>
                                                             )
                                                     }
